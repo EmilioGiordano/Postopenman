@@ -31,6 +31,7 @@ fn main() {
             commands::request::move_request,
             commands::request::rename_request,
             commands::http::send_request,
+            commands::export::export_file,
         ])
         .run(tauri::generate_context!())
         .expect("error running tauri application");

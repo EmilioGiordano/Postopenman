@@ -2,6 +2,7 @@
   import KeyValueEditor from '../shared/KeyValueEditor.svelte';
   import JsonHighlight from '../shared/JsonHighlight.svelte';
   import { activeRequestStore } from '../../stores/activeRequest.svelte';
+  import { exportFile } from '../../api/tauri';
   import type { KeyValuePair } from '../../api/tauri';
 
   let bodyType = $derived(activeRequestStore.activeRequest?.body_type ?? 'none');
@@ -9,6 +10,7 @@
 
   let textareaEl = $state<HTMLTextAreaElement | null>(null);
   let preEl = $state<HTMLElement | null>(null);
+  let copyLabel = $state('Copy');
 
   function handleTypeChange(e: Event) {
     const val = (e.target as HTMLSelectElement).value;
@@ -44,6 +46,30 @@
   }
 
   let displayContent = $derived(bodyContent || ' ');
+
+  let hasContent = $derived(bodyType !== 'none' && bodyContent.trim().length > 0);
+
+  async function handleCopy() {
+    if (!bodyContent) return;
+    await navigator.clipboard.writeText(bodyContent);
+    copyLabel = 'Copied!';
+    setTimeout(() => (copyLabel = 'Copy'), 1500);
+  }
+
+  function timestamp(): string {
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}.${pad(d.getMinutes())}.${pad(d.getSeconds())}`;
+  }
+
+  async function handleExport() {
+    if (!bodyContent) return;
+    const ext = bodyType === 'json' ? 'json' : 'txt';
+    const name = `body_${timestamp()}.${ext}`;
+    const filters = [{ name: ext.toUpperCase(), extensions: [ext] }];
+    if (ext !== 'txt') filters.push({ name: 'Text', extensions: ['txt'] });
+    await exportFile(bodyContent, name, filters);
+  }
 </script>
 
 <div class="body-editor">
@@ -55,6 +81,12 @@
       <option value="text">Text</option>
       <option value="form-urlencoded">Form URL-Encoded</option>
     </select>
+    {#if hasContent}
+      <div class="body-actions">
+        <button class="action-btn" onclick={handleCopy}>{copyLabel}</button>
+        <button class="action-btn" onclick={handleExport}>Export</button>
+      </div>
+    {/if}
   </div>
 
   {#if bodyType === 'none'}
@@ -111,6 +143,27 @@
     padding: 6px 28px 6px 10px;
     font-size: 12px;
     min-width: clamp(120px, 20%, 200px);
+  }
+
+  .body-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .action-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .action-btn:hover {
+    background: var(--color-hover);
+    color: var(--color-text-primary);
   }
 
   .body-none {

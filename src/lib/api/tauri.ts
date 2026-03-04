@@ -150,6 +150,19 @@ export async function renameRequest(id: string, name: string): Promise<void> {
   return invoke('rename_request', { id, name });
 }
 
+export interface FileFilter {
+  name: string;
+  extensions: string[];
+}
+
+export async function exportFile(
+  content: string,
+  defaultName: string,
+  filters: FileFilter[]
+): Promise<boolean> {
+  return invoke('export_file', { content, defaultName, filters });
+}
+
 export async function sendHttpRequest(
   method: string,
   url: string,
