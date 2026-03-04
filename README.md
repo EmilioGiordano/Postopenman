@@ -4,8 +4,6 @@ A lightweight, fast API client for Windows. No accounts, no AI features, no upgr
 
 Built with **Tauri v2** (Rust backend) and **Svelte 5** (frontend). The final binary is ~10MB with native performance.
 
-![screenshot](view.png)
-
 ## Features
 
 - **Unlimited workspaces** — organize projects independently
