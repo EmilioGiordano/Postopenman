@@ -1,0 +1,26 @@
+:root {
+  --color-bg-sidebar: #2f313d;
+  --color-bg-main: #292a35;
+  --color-bg-input: #343746;
+  --color-bg-card: #343746;
+  --color-text-primary: #f8f8f2;
+  --color-text-secondary: #6272a4;
+  --color-border: #44475a;
+  --color-hover: #44475a;
+  --color-selection: #44475a;
+  --color-button: #6272a4;
+  --color-scrollbar: #44475a;
+
+  --color-get: #50fa7b;
+  --color-post: #ffb86c;
+  --color-delete: #ff5555;
+  --color-put: #bd93f9;
+  --color-patch: #f1fa8c;
+  --color-head: #8be9fd;
+  --color-options: #ff79c6;
+
+  --color-success: #50fa7b;
+  --color-error: #ff5555;
+  --color-warning: #f1fa8c;
+  --color-info: #8be9fd;
+}
