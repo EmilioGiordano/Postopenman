@@ -1,5 +1,6 @@
 <script lang="ts">
   import { activeRequestStore } from '../../stores/activeRequest.svelte';
+  import JsonHighlight from '../shared/JsonHighlight.svelte';
 
   type ResponseTab = 'body' | 'headers';
   let activeTab = $state<ResponseTab>('body');
@@ -14,6 +15,11 @@
     if (s >= 300 && s < 400) return 'var(--color-warning)';
     if (s >= 400) return 'var(--color-error)';
     return 'var(--color-text-secondary)';
+  });
+
+  let isJson = $derived.by(() => {
+    if (!response) return false;
+    try { JSON.parse(response.body); return true; } catch { return false; }
   });
 
   let formattedBody = $derived.by(() => {
@@ -71,7 +77,11 @@
 
     <div class="response-body">
       {#if activeTab === 'body'}
-        <pre class="response-pre">{formattedBody}</pre>
+        {#if isJson}
+          <JsonHighlight json={formattedBody} />
+        {:else}
+          <pre class="response-pre">{formattedBody}</pre>
+        {/if}
       {:else}
         <div class="response-headers-list">
           {#each response.headers as header}
@@ -216,7 +226,7 @@
   .header-key {
     color: var(--color-info);
     font-weight: 600;
-    min-width: 180px;
+    min-width: clamp(100px, 25%, 220px);
     flex-shrink: 0;
   }
 

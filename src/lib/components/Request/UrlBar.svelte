@@ -80,7 +80,7 @@
   }
 
   .method-select {
-    width: 110px;
+    width: clamp(90px, 10%, 120px);
     padding: 8px 28px 8px 10px;
     font-size: 13px;
     font-weight: 700;

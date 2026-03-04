@@ -103,7 +103,7 @@
   .auth-select {
     padding: 6px 28px 6px 10px;
     font-size: 12px;
-    min-width: 160px;
+    min-width: clamp(120px, 18%, 180px);
   }
 
   .auth-field {

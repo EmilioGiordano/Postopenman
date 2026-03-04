@@ -4,8 +4,49 @@
   import { activeRequestStore } from './lib/stores/activeRequest.svelte';
   import { workspaceStore } from './lib/stores/workspaces.svelte';
 
+  let zoomLevel = $state(100);
+
   $effect(() => {
     workspaceStore.loadWorkspaces();
+  });
+
+  $effect(() => {
+    (document.documentElement.style as any).zoom = `${zoomLevel}%`;
+  });
+
+  $effect(() => {
+    function handleWheel(e: WheelEvent) {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.deltaY < 0) {
+        zoomLevel = Math.min(200, zoomLevel + 10);
+      } else {
+        zoomLevel = Math.max(50, zoomLevel - 10);
+      }
+    }
+
+    function handleKeydown(e: KeyboardEvent) {
+      if (!e.ctrlKey) return;
+      if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        zoomLevel = Math.min(200, zoomLevel + 10);
+      } else if (e.key === '-') {
+        e.preventDefault();
+        zoomLevel = Math.max(50, zoomLevel - 10);
+      } else if (e.key === '0') {
+        e.preventDefault();
+        zoomLevel = 100;
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { capture: true, passive: false });
+    window.addEventListener('keydown', handleKeydown, { capture: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel, { capture: true } as EventListenerOptions);
+      window.removeEventListener('keydown', handleKeydown, { capture: true } as EventListenerOptions);
+    };
   });
 </script>
 
@@ -28,17 +69,18 @@
 <style>
   .app-layout {
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
   }
 
   .sidebar {
-    width: 280px;
-    min-width: 280px;
+    width: clamp(200px, 20%, 320px);
+    min-width: 200px;
     height: 100%;
     background: var(--color-bg-sidebar);
     border-right: 1px solid var(--color-border);
+    flex-shrink: 0;
   }
 
   .main-content {
