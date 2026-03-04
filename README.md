@@ -64,7 +64,3 @@ src-tauri/              # Rust backend
     db.rs               # SQLite init and migrations
     main.rs             # Entry point
 ```
-
-## License
-
-MIT
