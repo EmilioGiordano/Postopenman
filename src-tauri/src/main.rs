@@ -28,6 +28,8 @@ fn main() {
             commands::request::update_request,
             commands::request::delete_request,
             commands::request::list_requests,
+            commands::request::move_request,
+            commands::request::rename_request,
             commands::http::send_request,
         ])
         .run(tauri::generate_context!())

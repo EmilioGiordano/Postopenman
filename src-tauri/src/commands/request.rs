@@ -115,6 +115,50 @@ pub fn update_request(
 }
 
 #[tauri::command]
+pub fn move_request(
+    id: String,
+    folder_id: Option<String>,
+    db: State<'_, Mutex<Connection>>,
+) -> Result<(), String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+
+    let updated = conn
+        .execute(
+            "UPDATE requests SET folder_id = ?1 WHERE id = ?2",
+            rusqlite::params![folder_id, id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if updated == 0 {
+        return Err("request not found".to_string());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn rename_request(
+    id: String,
+    name: String,
+    db: State<'_, Mutex<Connection>>,
+) -> Result<(), String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+
+    let updated = conn
+        .execute(
+            "UPDATE requests SET name = ?1 WHERE id = ?2",
+            rusqlite::params![name, id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if updated == 0 {
+        return Err("request not found".to_string());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn delete_request(id: String, db: State<'_, Mutex<Connection>>) -> Result<(), String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
 

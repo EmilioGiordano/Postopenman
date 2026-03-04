@@ -7,7 +7,7 @@
 
   type TabName = 'params' | 'headers' | 'auth' | 'body';
 
-  let activeTab = $state<TabName>('params');
+  let activeTab = $state<TabName>('body');
 
   let paramCount = $derived(
     activeRequestStore.activeRequest?.params.filter((p) => p.key !== '').length ?? 0
@@ -18,10 +18,10 @@
   );
 
   const tabs: { id: TabName; label: string }[] = [
+    { id: 'body', label: 'Body' },
     { id: 'params', label: 'Params' },
     { id: 'headers', label: 'Headers' },
     { id: 'auth', label: 'Auth' },
-    { id: 'body', label: 'Body' },
   ];
 
   function getBadge(tabId: TabName): number {

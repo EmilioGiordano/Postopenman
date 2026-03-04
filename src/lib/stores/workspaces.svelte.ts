@@ -120,6 +120,28 @@ class WorkspaceStore {
     }
   }
 
+  async moveRequest(id: string, folderId: string | null) {
+    try {
+      await api.moveRequest(id, folderId);
+      this.requests = this.requests.map((r) =>
+        r.id === id ? { ...r, folder_id: folderId } : r
+      );
+    } catch (err) {
+      console.error('Failed to move request:', err);
+    }
+  }
+
+  async renameRequest(id: string, name: string) {
+    try {
+      await api.renameRequest(id, name);
+      this.requests = this.requests.map((r) =>
+        r.id === id ? { ...r, name } : r
+      );
+    } catch (err) {
+      console.error('Failed to rename request:', err);
+    }
+  }
+
   async deleteRequest(id: string) {
     try {
       await api.deleteRequest(id);

@@ -142,6 +142,14 @@ export async function listRequests(workspaceId: string): Promise<SavedRequest[]>
   return raws.map(parseRequest);
 }
 
+export async function moveRequest(id: string, folderId: string | null): Promise<void> {
+  return invoke('move_request', { id, folderId });
+}
+
+export async function renameRequest(id: string, name: string): Promise<void> {
+  return invoke('rename_request', { id, name });
+}
+
 export async function sendHttpRequest(
   method: string,
   url: string,
