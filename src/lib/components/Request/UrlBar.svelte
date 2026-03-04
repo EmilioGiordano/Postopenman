@@ -70,6 +70,15 @@
       Send
     {/if}
   </button>
+
+  <label class="save-toggle" title="Keep response when switching requests">
+    <input
+      type="checkbox"
+      checked={activeRequestStore.getSaveFlag()}
+      onchange={(e) => activeRequestStore.setSaveFlag((e.target as HTMLInputElement).checked)}
+    />
+    <span class="save-label">Save</span>
+  </label>
 </div>
 
 <style>
@@ -124,5 +133,26 @@
   .send-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+
+  .save-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .save-toggle input[type='checkbox'] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--color-button);
+    cursor: pointer;
+  }
+
+  .save-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    user-select: none;
   }
 </style>

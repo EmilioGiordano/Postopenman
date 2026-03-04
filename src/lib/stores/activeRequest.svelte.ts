@@ -6,11 +6,30 @@ class ActiveRequestStore {
   activeRequest = $state<SavedRequest | null>(null);
   response = $state<HttpResponse | null>(null);
   loading = $state(false);
+  private responseCache = new Map<string, HttpResponse>();
+  private saveFlags = new Map<string, boolean>();
+
+  getSaveFlag(): boolean {
+    if (!this.activeRequest) return true;
+    return this.saveFlags.get(this.activeRequest.id) ?? true;
+  }
+
+  setSaveFlag(value: boolean) {
+    if (!this.activeRequest) return;
+    this.saveFlags.set(this.activeRequest.id, value);
+    if (!value) {
+      this.responseCache.delete(this.activeRequest.id);
+    }
+  }
 
   async selectRequest(id: string) {
-    this.response = null;
+    if (this.activeRequest && this.response && this.getSaveFlag()) {
+      this.responseCache.set(this.activeRequest.id, this.response);
+    }
     this.loading = false;
     this.activeRequest = await api.getRequest(id);
+    const saved = this.saveFlags.get(id) ?? true;
+    this.response = saved ? (this.responseCache.get(id) ?? null) : null;
   }
 
   updateField<K extends keyof SavedRequest>(field: K, value: SavedRequest[K]) {
@@ -55,6 +74,9 @@ class ActiveRequestStore {
       };
     } finally {
       this.loading = false;
+      if (this.activeRequest && this.response && this.getSaveFlag()) {
+        this.responseCache.set(this.activeRequest.id, this.response);
+      }
     }
   }
 
